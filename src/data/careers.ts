@@ -1,0 +1,43 @@
+// Source: https://mfbuild.com/careers/ — condensed without adding requirements.
+export const careerOpenings = [
+  {
+    id: "vdot-estimator",
+    title: "Construction Estimator",
+    specialty: "Site work & roadway work · VDOT",
+    vdot: true,
+    summary: "Estimate commercial and state projects, develop new business, and manage awarded work through final invoicing.",
+    highlights: ["3+ years estimating", "Word, Excel & BlueBeam", "Site & roadway work"],
+    duties: ["Locate opportunities and prepare site work and roadway bids for commercial and state projects.", "Manage awarded projects, including work schedules and final invoicing.", "Seek new business opportunities."],
+    requirements: ["At least 3 years of site and roadway estimating experience.", "Construction knowledge and the ability to develop pricing with estimating software and work independently.", "Strong Word, Excel and BlueBeam skills; excellent written and verbal communication.", "Precision, urgency, team management, and the ability to manage multiple projects and priorities."],
+  },
+  {
+    id: "project-manager-estimator",
+    title: "Project Manager / Estimator",
+    specialty: "Project delivery & estimating",
+    vdot: false,
+    summary: "Connect business development, estimating, and field progress to keep projects moving from takeoff to closeout.",
+    highlights: ["3+ years project management", "Microsoft Office", "HS diploma / GED"],
+    duties: ["Support business development and estimation takeoffs.", "Prepare material submittals, schedules in Microsoft Project, and requests for information (RFIs).", "Manage work in progress and project closeout."],
+    requirements: ["At least 3 years of project management experience; high school diploma or GED.", "Proficiency in Word, Excel, Project and Outlook.", "Strong organization, attention to detail, and written and verbal communication.", "A proactive problem solver who can multitask, support management, and remain adaptable under pressure."],
+  },
+  {
+    id: "assistant-project-manager",
+    title: "Assistant Project Manager",
+    specialty: "Project coordination",
+    vdot: false,
+    summary: "Support project managers with estimating, documentation, scheduling, and subcontractor coordination.",
+    highlights: ["1+ year in construction", "Microsoft Office", "HS diploma / GED"],
+    duties: ["Assist with estimation takeoffs, material submittals, schedules in Microsoft Project, and RFIs.", "Contact subcontractors for pricing, submittals, and scheduling."],
+    requirements: ["At least 1 year of construction experience; high school diploma or GED.", "Proficiency in Word, Excel, Project and Outlook.", "Organized, detail-oriented, and effective at multitasking in a fast-paced environment.", "Focused, supportive of management, adaptable, and calm under pressure."],
+  },
+  {
+    id: "vdot-superintendent",
+    title: "Construction Superintendent",
+    specialty: "VDOT experience",
+    vdot: true,
+    summary: "Coordinate crews, materials, and daily progress while maintaining VDOT standards and project milestones.",
+    highlights: ["VDOT project experience", "5+ years construction preferred", "2+ years superintendent preferred"],
+    duties: ["Assign daily workforce and materials, ensuring all placed materials are VDOT-approved.", "Report daily quantities to office management and maintain a construction progress log.", "Coordinate project activities and services across the construction team.", "Maintain build-out schedules, milestones, and deadlines; perform VDOT walkthroughs and aftercare instructions."],
+    requirements: ["Experience working on VDOT projects.", "5+ years of construction experience and 2+ years as a construction superintendent preferred.", "Strong written and verbal communication and experience managing teams and projects.", "An organized, thorough approach with critical-thinking and problem-solving skills."],
+  },
+];

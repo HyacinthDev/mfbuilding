@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence } from "framer-motion";
+import { Toaster } from "sonner";
 import { markets, projects, services } from "./data/content";
 import HomePage from "./sections/home";
 import {
@@ -82,8 +83,18 @@ export default function App() {
   }, [path]);
 
   return (
-    <AnimatePresence mode="wait">
-      {loading ? <LoadingScreen key="loading" /> : <div key={path}>{route}</div>}
-    </AnimatePresence>
+    <>
+      <AnimatePresence mode="wait">
+        {loading ? <LoadingScreen key="loading" /> : <div key={path}>{route}</div>}
+      </AnimatePresence>
+      <Toaster
+        position="bottom-right"
+        richColors
+        closeButton
+        toastOptions={{
+          className: "!rounded-2xl !border !border-[var(--color-border)] !shadow-[0_18px_60px_rgba(23,23,23,.14)]",
+        }}
+      />
+    </>
   );
 }

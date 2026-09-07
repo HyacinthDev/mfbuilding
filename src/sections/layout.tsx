@@ -26,13 +26,40 @@ function Navbar() {
   const [open, setOpen] = useState(false);
   const [marketsOpen, setMarketsOpen] = useState(false);
   const [mobileMarketsOpen, setMobileMarketsOpen] = useState(false);
+  const navbarRef = useRef<HTMLElement | null>(null);
   const marketsRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
+    if (!open) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = previousOverflow;
     };
   }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    function closeMobileMenu(e: PointerEvent) {
+      if (!navbarRef.current?.contains(e.target as Node)) {
+        setOpen(false);
+        setMobileMarketsOpen(false);
+      }
+    }
+    document.addEventListener("pointerdown", closeMobileMenu);
+    return () => document.removeEventListener("pointerdown", closeMobileMenu);
+  }, [open]);
+
+  useEffect(() => {
+    // Keep React menu state in sync with the CSS desktop breakpoint.
+    const desktop = window.matchMedia("(min-width: 1280px)");
+    const resetMenus = () => {
+      setOpen(false);
+      setMobileMarketsOpen(false);
+      setMarketsOpen(false);
+    };
+    desktop.addEventListener("change", resetMenus);
+    return () => desktop.removeEventListener("change", resetMenus);
+  }, []);
 
   useEffect(() => {
     function closeMarkets(e: MouseEvent) {
@@ -62,13 +89,13 @@ function Navbar() {
   };
 
   return (
-    <header className="fixed left-1/2 top-4 z-50 w-[80%] -translate-x-1/2 rounded-3xl border border-[var(--color-border)] bg-[rgba(246,245,240,.92)] shadow-[0_18px_60px_rgba(23,23,23,.12)] backdrop-blur">
+    <header ref={navbarRef} className="fixed inset-x-0 top-4 z-50 mx-auto w-[calc(100%-2rem)] max-w-[1440px] md:w-[90%] xl:w-[80%] rounded-3xl border border-[var(--color-border)] bg-[rgba(246,245,240,.92)] shadow-[0_18px_60px_rgba(23,23,23,.12)] backdrop-blur">
       <div className="px-5 md:px-7">
-        <div className="flex h-20 items-center justify-between">
+        <div className="flex h-20 min-w-0 items-center justify-between gap-4">
           <Link href="/" className="inline-flex min-h-11 items-center" aria-label="M&F home">
             <img src={logoSrc} alt="M&F" className="h-16 w-auto object-contain" decoding="async" />
           </Link>
-          <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary">
+          <nav className="hidden shrink-0 items-center gap-5 whitespace-nowrap xl:flex 2xl:gap-7" aria-label="Primary">
             {nav.slice(0, 1).map(([l, h]) => (
               <Link key={h} href={h} className={navLinkClass(h)}>
                 {l}
@@ -108,7 +135,7 @@ function Navbar() {
             <Button href="/get-started">Get Started</Button>
           </nav>
           <button
-            className="min-h-11 rounded-xl px-3 font-semibold transition hover:bg-black/5 lg:hidden"
+            className="min-h-11 shrink-0 rounded-xl px-3 font-semibold transition hover:bg-black/5 xl:hidden"
             aria-expanded={open}
             aria-controls="mobile-menu"
             onClick={() => {
@@ -121,7 +148,7 @@ function Navbar() {
         </div>
       </div>
       {open && (
-        <div id="mobile-menu" className="absolute inset-x-0 top-[calc(100%+.75rem)] z-50 max-h-[calc(100vh-8rem)] overflow-auto rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] p-5 shadow-[0_18px_60px_rgba(23,23,23,.12)] lg:hidden">
+        <div id="mobile-menu" className="absolute inset-x-0 top-[calc(100%+.75rem)] z-50 max-h-[calc(100dvh-8rem)] overflow-y-auto overscroll-contain rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] p-5 shadow-[0_18px_60px_rgba(23,23,23,.12)] xl:hidden">
           <nav className="grid gap-2" aria-label="Mobile primary">
             {nav.slice(0, 1).map(([l, h]) => (
               <Link onClick={() => setOpen(false)} key={h} href={h} className="border-b border-[var(--color-border)] py-5 font-display text-3xl">
@@ -161,7 +188,7 @@ function Navbar() {
                 {l}
               </Link>
             ))}
-            <div className="pt-6">
+            <div className="pt-6 [&>a]:w-full">
               <Button href="/get-started">Get Started</Button>
             </div>
           </nav>
@@ -265,6 +292,28 @@ function Footer() {
 }
 
 export function PageShell({ children }: { children: ReactNode }) {
+  useEffect(() => {
+    let width = document.documentElement.clientWidth;
+    let frame = 0;
+    const syncViewport = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const nextWidth = document.documentElement.clientWidth;
+        if (nextWidth === width) return;
+        width = nextWidth;
+        // Clear horizontal offsets retained across desktop/mobile emulation.
+        // Leave vertical position and pinch-zoom gestures untouched.
+        window.scrollTo({ left: 0, top: window.scrollY, behavior: "instant" });
+      });
+    };
+    window.addEventListener("resize", syncViewport);
+    window.visualViewport?.addEventListener("resize", syncViewport);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("resize", syncViewport);
+      window.visualViewport?.removeEventListener("resize", syncViewport);
+    };
+  }, []);
   return (
     <>
       <Navbar />

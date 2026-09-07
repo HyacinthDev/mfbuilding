@@ -4,7 +4,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import videoSrc from "../assets/Landing Page Video — MFBuild - Horizontal (webm).webm";
 import poster from "../assets/heroSectionImage.webp";
 
-export function VideoHero({ children }: { children: ReactNode }) {
+export function VideoHero({ children }: { children: (playControl: ReactNode) => ReactNode }) {
   const root = useRef<HTMLElement>(null);
   const video = useRef<HTMLVideoElement>(null);
   const halo = useRef<HTMLDivElement>(null);
@@ -123,11 +123,12 @@ export function VideoHero({ children }: { children: ReactNode }) {
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, filter: reduceMotion ? "none" : "blur(6px)", pointerEvents: "none" }}
             transition={{ duration: reduceMotion ? 0 : 0.45, ease: "easeOut" }}>
             <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,.78),rgba(0,0,0,.58)_42%,rgba(0,0,0,.22)_72%,rgba(0,0,0,.08))]" />
-            <div className="relative">{children}</div>
-            <button ref={playButton} onClick={open} disabled={error}
-              className="absolute bottom-24 left-1/2 flex min-h-11 -translate-x-1/2 items-center gap-2 rounded-xl border border-white/60 bg-black/30 px-5 py-3 text-white hover:bg-black/60 disabled:opacity-60 md:sr-only md:focus:not-sr-only">
-              <Play size={18} aria-hidden="true" /> {error ? "Video unavailable" : "Play Video"}
-            </button>
+            <div className="relative">{children(
+              <button ref={playButton} onClick={open} disabled={error}
+                className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-white/60 bg-black/30 px-5 py-3 font-semibold text-white hover:bg-black/60 disabled:opacity-60 md:sr-only md:focus:not-sr-only">
+                <Play size={18} aria-hidden="true" /> {error ? "Video unavailable" : "Play Video"}
+              </button>
+            )}</div>
           </motion.div>
         )}
         </AnimatePresence>

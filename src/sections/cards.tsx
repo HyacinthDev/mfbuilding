@@ -52,16 +52,16 @@ export function ServiceCard({ s, index = 0, variant = "row" }: { s: Service; ind
   return (
     <Link
       href={`/services/${s.slug}`}
-      className="service-row group grid gap-4 border-t border-[var(--color-border)] px-3 py-7 transition-colors duration-300 md:grid-cols-[5.5rem_1fr_auto] md:items-center md:px-5"
+      className="service-row group grid grid-cols-[1fr_auto] gap-4 border-t border-[var(--color-border)] px-3 py-7 transition-colors duration-300 md:grid-cols-[5.5rem_1fr_auto] md:items-center md:px-5"
     >
       <span className="service-number font-display text-5xl font-bold leading-none tracking-[-.06em] text-[var(--color-muted)] md:text-6xl">
         {String(index + 1).padStart(2, "0")}
       </span>
-      <div className="max-w-3xl">
+      <div className="col-span-2 row-start-2 min-w-0 max-w-3xl md:col-span-1 md:col-start-2 md:row-start-1">
         <h3 className="font-display text-2xl tracking-[-.02em]">{s.name}</h3>
         <p className="mt-2 max-w-2xl leading-7 text-[var(--color-muted)]">{s.summary}</p>
       </div>
-      <span className="flex size-14 items-center justify-center justify-self-start text-[var(--color-ink)] transition-transform duration-300 ease-out group-hover:-translate-y-1.5 group-hover:translate-x-1.5 md:justify-self-end">
+      <span className="col-start-2 row-start-1 flex size-14 items-center justify-center justify-self-end text-[var(--color-ink)] transition-transform duration-300 ease-out group-hover:-translate-y-1.5 group-hover:translate-x-1.5 md:col-start-3">
         <ArrowUpRight size={90} strokeWidth={2} />
       </span>
     </Link>

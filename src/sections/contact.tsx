@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { ArrowUpRight, Mail, MapPin, Phone } from "lucide-react";
+import { toast } from "sonner";
 import contactImage from "../assets/services.webp";
 import { PageShell } from "./layout";
 import { Container, Reveal, Link } from "./ui";
@@ -43,6 +44,7 @@ export function ContactPage() {
 function InquiryForm() {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [messageLength, setMessageLength] = useState(0);
+  const [canSubmit, setCanSubmit] = useState(false);
   function validate(field: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement) {
     field.setCustomValidity("");
     const value = field.value.trim();
@@ -62,12 +64,20 @@ function InquiryForm() {
       field.setCustomValidity("Please use 20–2,000 characters to describe your inquiry. Leading and trailing spaces do not count.");
     }
   }
+  function syncSubmitState(form: HTMLFormElement) {
+    form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>("input, textarea, select").forEach(validate);
+    setCanSubmit(form.checkValidity());
+  }
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!endpoint || status === "sending") return;
+    if (status === "sending") return;
     const form = event.currentTarget;
     form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>("input, textarea, select").forEach(validate);
     if (!form.reportValidity()) return;
+    if (!endpoint) {
+      toast.error("Inquiry submission is not configured", { description: "Please email info@mfbuild.com or call (855) MF-BUILD." });
+      return;
+    }
     const data = new FormData(form);
     for (const [key, value] of data.entries()) {
       if (typeof value === "string") data.set(key, value.trim());
@@ -77,9 +87,13 @@ function InquiryForm() {
       const response = await fetch(endpoint, { method: "POST", body: data, headers: { Accept: "application/json" } });
       if (!response.ok) throw new Error("Unable to send inquiry");
       setStatus("sent");
+      toast.success("Inquiry sent", { description: "Thank you for contacting M&F." });
       form.reset();
       setMessageLength(0);
-    } catch { setStatus("error"); }
+    } catch {
+      setStatus("error");
+      toast.error("Inquiry not sent", { description: "Please try again, or email info@mfbuild.com." });
+    }
   }
   return (
     <form onSubmit={submit} onInput={(event) => {
@@ -87,10 +101,12 @@ function InquiryForm() {
       if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement || field instanceof HTMLSelectElement) {
         validate(field);
         if (field.name === "message") setMessageLength(field.value.length);
+        syncSubmitState(event.currentTarget);
       }
-    }} onBlur={(event) => {
+    }} onChange={(event) => syncSubmitState(event.currentTarget)} onBlur={(event) => {
       const field = event.target;
       if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement || field instanceof HTMLSelectElement) validate(field);
+      syncSubmitState(event.currentTarget);
     }} aria-labelledby="inquiry-title" className="rounded-2xl border border-[var(--color-border)] bg-white p-6 md:p-10">
       <h2 id="inquiry-title" className="font-display text-3xl tracking-[-.03em]">Tell us what you’re planning.</h2>
       <p className="mt-3 text-sm leading-6 text-[var(--color-muted)]">Share a few details to start the conversation. Fields marked * are required.</p>
@@ -110,7 +126,7 @@ function InquiryForm() {
         <label className="block text-sm font-semibold">Project location <span className="font-normal text-[var(--color-muted)]">(optional)</span><input name="location" minLength={2} maxLength={200} className={inputClass} aria-describedby="location-hint" /><span id="location-hint" className="mt-2 block font-normal text-[var(--color-muted)]">City and state are enough to start.</span></label>
         <label className="block text-sm font-semibold">Message *<textarea name="message" required rows={5} minLength={20} maxLength={2000} className={inputClass} aria-describedby="message-count" /><span id="message-count" className="mt-1 block text-right text-xs font-normal tabular-nums text-[var(--color-muted)]">{messageLength.toLocaleString()} / 2,000</span></label>
         <label className="flex items-start gap-3 text-sm leading-6"><input type="checkbox" name="consent" required className="mt-1 size-5 shrink-0 accent-[var(--color-ink)]" /><span>I agree to be contacted about this inquiry. *</span></label>
-        <button type="submit" disabled={!endpoint} className="flex min-h-12 w-full items-center justify-center gap-3 rounded-xl bg-[var(--color-brand-yellow)] px-6 py-3 font-semibold text-[var(--color-ink)] transition hover:bg-[var(--color-brand-yellow-hover)] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto">{status === "sending" ? "Sending inquiry…" : "Send inquiry"}<ArrowUpRight size={18} aria-hidden="true" /></button>
+        <button type="submit" disabled={status === "sending" || !canSubmit} className="flex min-h-12 w-full items-center justify-center gap-3 rounded-xl bg-[var(--color-brand-yellow)] px-6 py-3 font-semibold text-[var(--color-ink)] transition hover:bg-[var(--color-brand-yellow-hover)] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto">{status === "sending" ? "Sending inquiry…" : "Send inquiry"}<ArrowUpRight size={18} aria-hidden="true" /></button>
       </fieldset>
       <div aria-live="polite" className="mt-4 text-sm leading-6">
         {status === "sent" && <p className="text-[var(--color-success)]">Your inquiry was sent successfully. Thank you for contacting M&F.</p>}

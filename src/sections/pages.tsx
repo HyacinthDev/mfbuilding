@@ -132,7 +132,7 @@ export function DesignBuildPage() {
                     </p>
                   </Reveal>
                   <Reveal delay={0.18}>
-                    <div className="mt-8 flex flex-wrap gap-4">
+                    <div className="mt-8 grid w-full max-w-2xl grid-cols-1 gap-4 md:grid-cols-2 [&>a]:min-h-12 [&>a]:w-full [&>a]:text-center">
                       <Button href="/get-started">Start a project</Button>
                       <Button href="/contact" variant="text">Talk with M&F <ArrowUpRight size={18} /></Button>
                     </div>
@@ -297,7 +297,7 @@ export function FederalPage() {
                     </p>
                   </Reveal>
                   <Reveal delay={0.18}>
-                    <div className="mt-8 flex flex-wrap gap-4">
+                    <div className="mt-8 grid w-full max-w-2xl grid-cols-1 gap-4 md:grid-cols-2 [&>a]:min-h-12 [&>a]:w-full [&>a]:text-center">
                       <Button href="/get-started">Start a federal project</Button>
                       <Button href="/contact" variant="text">Talk with M&F <ArrowUpRight size={18} /></Button>
                     </div>
@@ -498,7 +498,7 @@ export function StateLocalPage() {
                     <p className="mt-6 max-w-2xl text-lg leading-8 text-[var(--color-graphite)]">
                       Public work asks for safety, schedule discipline, budget control, and minimal disruption. M&F is built to meet those standards in active civic environments.
                     </p>
-                    <div className="mt-8 flex flex-wrap gap-4">
+                    <div className="mt-8 grid w-full max-w-2xl grid-cols-1 gap-4 md:grid-cols-2 [&>a]:min-h-12 [&>a]:w-full [&>a]:text-center">
                       <Button href="/get-started">Start a public project</Button>
                       <Button href="/contact" variant="text">Talk with M&F <ArrowUpRight size={18} /></Button>
                     </div>
@@ -663,7 +663,7 @@ export function ResidentialPage() {
                     </p>
                   </Reveal>
                   <Reveal delay={0.18}>
-                    <div className="mt-8 flex flex-wrap gap-4">
+                    <div className="mt-8 grid w-full max-w-2xl grid-cols-1 gap-4 md:grid-cols-2 [&>a]:min-h-12 [&>a]:w-full [&>a]:text-center">
                       <Button href="/contact">Contact M&F</Button>
                       <Button href="/get-started" variant="text">Start a residential project <ArrowUpRight size={18} /></Button>
                     </div>
@@ -867,7 +867,7 @@ export function CommercialPage() {
                     </p>
                   </Reveal>
                   <Reveal delay={0.18}>
-                    <div className="mt-8 flex flex-wrap gap-4">
+                    <div className="mt-8 grid w-full max-w-2xl grid-cols-1 gap-4 md:grid-cols-2 [&>a]:min-h-12 [&>a]:w-full [&>a]:text-center">
                       <Button href="/get-started">Start a commercial project</Button>
                       <Button href="/contact" variant="text">Talk with M&F <ArrowUpRight size={18} /></Button>
                     </div>
@@ -1046,7 +1046,7 @@ export function AssociationsPropertyManagersPage() {
                     </p>
                   </Reveal>
                   <Reveal delay={0.18}>
-                    <div className="mt-8 flex flex-wrap gap-4">
+                    <div className="mt-8 grid w-full max-w-2xl grid-cols-1 gap-4 md:grid-cols-2 [&>a]:min-h-12 [&>a]:w-full [&>a]:text-center">
                       <Button href="/contact">Schedule an on-site visit</Button>
                       <Button href="/get-started" variant="text">Start a property project <ArrowUpRight size={18} /></Button>
                     </div>
@@ -1536,14 +1536,7 @@ export { CareersPage } from "./careers";
 
 export { ContactPage } from "./contact";
 
-export function GetStartedPage() {
-  return (
-    <PageShell>
-      <PageHero title="Get Started" copy="Share concise project context so M&F can understand fit, scope, market, service need, location, and timing." />
-      <Section><Container><ContactForm /></Container></Section>
-    </PageShell>
-  );
-}
+export { GetStartedPage } from "./get-started";
 
 function ContactForm({ compact = false }: { compact?: boolean }) {
   const [sent, setSent] = useState(false);

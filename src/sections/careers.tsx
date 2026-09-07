@@ -1,5 +1,6 @@
 import { useRef, useState, type FormEvent } from "react";
 import { ArrowDown, ArrowUpRight, ChevronDown, HeartPulse, PiggyBank, Palmtree, UsersRound } from "lucide-react";
+import { toast } from "sonner";
 import { careerOpenings } from "../data/careers";
 import estimatorImage from "../assets/estimator.webp";
 import defaultImage from "../assets/heroSectionImage.webp";
@@ -31,7 +32,7 @@ export function CareersPage() {
             </div>
             <Reveal delay={0.18}>
               <p className="max-w-lg text-lg leading-8 text-white/85">Bring your eye for detail, communication skills, and drive to learn to a family-owned company that celebrates teamwork.</p>
-              <div className="mt-7 flex flex-wrap gap-3">
+              <div className="mt-7 grid w-full max-w-xl grid-cols-1 gap-4 sm:grid-cols-2 [&>a]:min-h-12 [&>a]:w-full [&>button]:min-h-12 [&>button]:w-full">
                 <button onClick={() => apply()} className="min-h-12 rounded-xl bg-[var(--color-brand-yellow)] px-6 py-3 font-semibold text-[var(--color-ink)] transition hover:bg-[var(--color-brand-yellow-hover)]">Apply now <ArrowUpRight className="ml-2 inline" size={18} /></button>
                 <Button href="#hot-jobs" variant="secondaryLight">Explore roles <ArrowDown size={18} /></Button>
               </div>
@@ -101,21 +102,34 @@ export function CareersPage() {
 function ApplicationForm({ position, setPosition, positionInput }: { position: string; setPosition: (value: string) => void; positionInput: React.RefObject<HTMLSelectElement | null> }) {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [fileError, setFileError] = useState("");
+  const [canSubmit, setCanSubmit] = useState(false);
+  function syncSubmitState(form: HTMLFormElement) {
+    setCanSubmit(form.checkValidity() && !fileError);
+  }
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!applicationEndpoint || fileError || status === "sending") return;
+    if (fileError || status === "sending") return;
     const form = event.currentTarget;
+    if (!form.reportValidity()) return;
+    if (!applicationEndpoint) {
+      toast.error("Application submission is not configured", { description: "Please contact M&F directly for now." });
+      return;
+    }
     setStatus("sending");
     try {
       const response = await fetch(applicationEndpoint, { method: "POST", body: new FormData(form), headers: { Accept: "application/json" } });
       if (!response.ok) throw new Error("Application could not be sent");
       setStatus("sent");
+      toast.success("Application sent", { description: "Thank you for your interest in M&F." });
       form.reset();
       setPosition("");
-    } catch { setStatus("error"); }
+    } catch {
+      setStatus("error");
+      toast.error("Application not sent", { description: "Please try again." });
+    }
   }
   return (
-    <form onSubmit={submit} className="rounded-3xl border border-[var(--color-border)] bg-white p-6 md:p-9">
+    <form onSubmit={submit} onInput={(event) => syncSubmitState(event.currentTarget)} onChange={(event) => syncSubmitState(event.currentTarget)} className="rounded-3xl border border-[var(--color-border)] bg-white p-6 md:p-9">
       {!applicationEndpoint && <p className="mb-7 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-warm)] p-4 text-sm leading-6" role="note">Online applications are not accepting submissions yet. You can explore the form, but nothing will be sent.</p>}
       <fieldset disabled={status === "sending"} className="space-y-6 disabled:opacity-60">
         <legend className="mb-6 font-display text-2xl">Contact & experience</legend>
@@ -135,7 +149,7 @@ function ApplicationForm({ position, setPosition, positionInput }: { position: s
           event.target.setCustomValidity(invalid ? "Choose a PDF, DOC, or DOCX file smaller than 5 MB." : "");
         }} /><span id="resume-hint" className="mt-2 block font-normal text-[var(--color-muted)]">PDF, DOC, or DOCX · Maximum 5 MB</span><span id="resume-error" className="mt-2 block text-[var(--color-error)]" role="alert">{fileError}</span></label>
         <label className="flex items-start gap-3 text-sm leading-6"><input type="checkbox" name="consent" required className="mt-1 size-5 shrink-0 accent-[var(--color-ink)]" /><span>I confirm that this information is accurate and agree to be contacted about my application. *</span></label>
-        <button type="submit" disabled={!applicationEndpoint || !!fileError} className="min-h-12 rounded-xl bg-[var(--color-brand-yellow)] px-6 py-3 font-semibold transition hover:bg-[var(--color-brand-yellow-hover)] disabled:cursor-not-allowed disabled:opacity-50">{status === "sending" ? "Sending application…" : "Submit application"}</button>
+        <button type="submit" disabled={status === "sending" || !!fileError || !canSubmit} className="min-h-12 rounded-xl bg-[var(--color-brand-yellow)] px-6 py-3 font-semibold transition hover:bg-[var(--color-brand-yellow-hover)] disabled:cursor-not-allowed disabled:opacity-50">{status === "sending" ? "Sending application…" : "Submit application"}</button>
       </fieldset>
       <div aria-live="polite" className="mt-4 text-sm leading-6">
         {status === "sent" && <p className="text-[var(--color-success)]">Your application was sent successfully. Thank you for your interest in M&F.</p>}

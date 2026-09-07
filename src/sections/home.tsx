@@ -10,7 +10,7 @@ import { CTA } from "./cta";
 
 export function Hero() {
   return (
-    <VideoHero>
+    <VideoHero>{(playControl) => (
       <Container wide>
         <div className="flex min-h-screen items-center justify-center py-32 text-center">
           <div className="mx-auto flex max-w-5xl flex-col items-center">
@@ -27,16 +27,17 @@ export function Hero() {
                 M&F serves public, commercial, property-management, and residential needs through construction, civil, concrete, structural, maintenance, and repair capability.
               </p>
             </Reveal>
-            <Reveal delay={0.35}>
-              <div className="mt-8 flex flex-wrap justify-center gap-4">
+            <Reveal delay={0.35} className="w-full max-w-xl">
+              <div className="relative mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 [&>a]:min-h-12 [&>a]:w-full">
                 <Button href="/get-started">Get Started</Button>
                 <Button href="/contact" variant="secondaryLight">Discuss a project</Button>
+                {playControl}
               </div>
             </Reveal>
           </div>
         </div>
       </Container>
-    </VideoHero>
+    )}</VideoHero>
   );
 }
 
@@ -188,7 +189,7 @@ export function Testimonials() {
     <Section className="overflow-hidden bg-[var(--color-surface-warm)]">
       <Container wide>
         <Reveal delay={0.02}>
-          <div className="mx-auto mb-12 max-w-3xl text-center">
+          <div className="mx-auto mb-6 max-w-3xl text-center">
             <p className="text-sm font-semibold uppercase tracking-[.16em] text-[var(--color-muted)]">
               Testimonials
             </p>
@@ -199,7 +200,7 @@ export function Testimonials() {
         </Reveal>
 
         <Reveal delay={0.08}>
-          <div className="relative mx-auto h-[34rem] max-w-6xl overflow-hidden">
+          <div className="relative mx-auto h-[30rem] max-w-6xl overflow-hidden">
             <div className="pointer-events-none absolute inset-y-0 left-0 z-30 hidden w-56 bg-gradient-to-r from-[var(--color-surface-warm)] to-transparent md:block" />
             <div className="pointer-events-none absolute inset-y-0 right-0 z-30 hidden w-56 bg-gradient-to-l from-[var(--color-surface-warm)] to-transparent md:block" />
             {testimonials.map((item, index) => {
@@ -238,7 +239,7 @@ export function Testimonials() {
           </div>
         </Reveal>
 
-        <div className="mt-6 flex justify-center gap-3">
+        <div className="mt-3 flex justify-center gap-3">
           <button
             type="button"
             aria-label="Previous testimonial"
@@ -340,13 +341,13 @@ export function Process() {
             </Reveal>
           </div>
 
-          <div className="relative">
-            <div className="process-line absolute bottom-14 left-8 top-14 w-px bg-[var(--color-border)] md:left-1/2" />
+          <div className="relative min-w-0">
+            <div className="process-line absolute bottom-14 left-1/2 top-14 w-px bg-[var(--color-border)]" />
             <div
-              className="process-line process-line-active absolute left-8 top-0 h-40 w-1 rounded-full transition-transform duration-700 ease-out md:left-1/2"
+              className="process-line process-line-active absolute left-1/2 top-0 hidden h-40 w-1 rounded-full transition-transform duration-700 ease-out md:block"
               style={{ transform: `translate3d(-2px, calc(${activeStep} * 50vh + 14vh), 0)` }}
             />
-            <ol className="relative grid gap-3">
+            <ol className="relative grid min-w-0 gap-0 md:gap-3">
               {steps.map(({ title, description, Icon }, index) => {
                 const active = activeStep === index;
                 const cardLeft = index % 2 === 0;
@@ -357,11 +358,13 @@ export function Process() {
                       stepRefs.current[index] = node;
                     }}
                     data-step-index={index}
-                    className="grid min-h-[50vh] items-center pl-20 md:grid-cols-[1fr_5rem_1fr] md:gap-8 md:pl-0"
+                    className="relative grid min-h-[50vh] min-w-0 items-center py-10 md:static md:grid-cols-[minmax(0,1fr)_5rem_minmax(0,1fr)] md:gap-8 md:py-0"
                   >
-                    <div className={`${cardLeft ? "md:col-start-1 md:text-right" : "md:col-start-3"}`}>
+                    <div aria-hidden="true" className={`process-line-active pointer-events-none absolute inset-y-0 left-1/2 w-1 -translate-x-1/2 transition-opacity duration-700 motion-reduce:transition-none md:hidden ${active ? "opacity-100" : "opacity-0"}`} />
+                    <div className={`relative z-10 mx-auto w-full min-w-0 max-w-md md:mx-0 md:max-w-none ${cardLeft ? "md:col-start-1 md:text-right" : "md:col-start-3"}`}>
                       <Reveal delay={0.02}>
-                        <article className={`rounded-3xl border p-6 transition duration-500 md:p-8 ${active ? "border-[rgba(242,195,0,.45)] bg-[rgba(242,195,0,.11)] shadow-[0_24px_80px_rgba(23,23,23,.10)]" : "border-[var(--color-border)] bg-[var(--color-surface-warm)]"}`}>
+                        <article className={`relative isolate overflow-hidden rounded-3xl border p-6 transition duration-500 md:p-8 ${active ? "border-[rgba(242,195,0,.45)] bg-[#fcf6df] shadow-[0_24px_80px_rgba(23,23,23,.10)] md:bg-[rgba(242,195,0,.11)]" : "border-[var(--color-border)] bg-[var(--color-surface-warm)]"}`}>
+                          <Icon aria-hidden="true" size={144} strokeWidth={1.45} className="pointer-events-none absolute -bottom-5 -right-4 -z-10 text-[var(--color-ink)] opacity-10 md:hidden" />
                           <span className="font-display text-5xl font-bold leading-none tracking-[-.07em] text-[var(--color-muted)]/45">
                             {String(index + 1).padStart(2, "0")}
                           </span>
@@ -375,7 +378,7 @@ export function Process() {
                       </Reveal>
                     </div>
 
-                    <div className={`${cardLeft ? "md:col-start-3 md:justify-self-start" : "md:col-start-1 md:justify-self-end"} mt-5 flex items-center transition-colors duration-500 md:row-start-1 md:mt-0 ${active ? "text-[var(--color-brand-yellow)]" : "text-[var(--color-ink)]/18"}`}>
+                    <div className={`${cardLeft ? "md:col-start-3 md:justify-self-start" : "md:col-start-1 md:justify-self-end"} hidden items-center transition-colors duration-500 md:row-start-1 md:mt-0 md:flex ${active ? "text-[var(--color-brand-yellow)]" : "text-[var(--color-ink)]/18"}`}>
                       <Icon size={128} strokeWidth={1.45} />
                     </div>
                   </li>

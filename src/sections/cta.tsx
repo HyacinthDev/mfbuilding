@@ -18,7 +18,7 @@ export function CTA() {
               <p className="mx-auto mt-6 max-w-2xl text-base leading-7 text-white/72 md:text-lg md:leading-8">
                 Share the scope, location, timeline, and project context. M&F can review the fit and help define the next practical step.
               </p>
-              <div className="pointer-events-auto mt-9 flex flex-wrap items-center justify-center gap-4">
+              <div className="pointer-events-auto mt-9 grid w-full max-w-xl grid-cols-1 gap-4 sm:grid-cols-2 [&>a]:min-h-12 [&>a]:w-full">
                 <Button href="/get-started">Get Started</Button>
                 <Button href="/contact" variant="secondaryLight">
                   Contact us <ArrowUpRight size={18} strokeWidth={2.4} />
